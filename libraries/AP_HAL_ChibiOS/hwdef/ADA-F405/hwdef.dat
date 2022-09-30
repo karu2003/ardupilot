@@ -1,0 +1,164 @@
+# hw definition for Sierra-F405
+
+# MCU class and specific type
+MCU STM32F4xx STM32F405xx
+
+# bootloader starts firmware at 64k
+FLASH_RESERVE_START_KB 64
+FLASH_SIZE_KB 1024
+
+# store parameters in pages 2 and 3
+STORAGE_FLASH_PAGE 2
+define HAL_STORAGE_SIZE 15360
+
+# board ID for firmware load
+APJ_BOARD_ID 1099
+
+env AP_PERIPH 1
+
+define STM32_ST_USE_TIMER 5
+define CH_CFG_ST_RESOLUTION 32
+
+# enable watchdog
+define HAL_WATCHDOG_ENABLED_DEFAULT true
+
+# crystal frequency
+OSCILLATOR_HZ 12000000
+
+define HAL_NO_GPIO_IRQ
+
+# avoid timer and RCIN threads to save memory
+define HAL_NO_RCIN_THREAD
+
+define HAL_USE_RTC FALSE
+
+define DMA_RESERVE_SIZE 0
+
+define HAL_DISABLE_LOOP_DELAY
+define HAL_NO_MONITOR_THREAD
+define HAL_NO_LOGGING
+define DISABLE_SERIAL_ESC_COMM TRUE
+
+define HAL_DEVICE_THREAD_STACK 768
+
+# we setup a small defaults.parm
+define AP_PARAM_MAX_EMBEDDED_PARAM 256
+
+# keep ROMFS uncompressed as we don't have enough RAM
+# to uncompress the bootloader at runtime
+env ROMFS_UNCOMPRESSED True
+
+
+# ------------------ SPI1 -----------------------
+PA5  SPI1_SCK SPI1
+PA6  SPI1_MISO SPI1
+PA7  SPI1_MOSI SPI1
+
+# --------------- SPI3 Flash --------------------
+PB3  SPI3_SCK SPI3
+PB4  SPI3_MISO SPI3
+PB5  SPI3_MOSI SPI3
+
+# ----------------- SPI CS ----------------------
+PC4 BARO_CS CS
+PC5 MAG_CS CS
+PA15 FLASH_CS CS
+
+# ----------------- CAN bus ---------------------
+PB8 CAN1_RX CAN1
+PB9 CAN1_TX CAN1
+
+CAN_ORDER 1
+
+# use DNA for node allocation
+
+define CAN_APP_NODE_NAME "org.ardupilot.ADA-F405"
+
+# debugger support
+PA13 JTMS-SWDIO SWD
+PA14 JTCK-SWCLK SWD
+
+# LED, active low
+PC1 LED OUTPUT HIGH GPIO(1)
+
+# one I2C bus
+PB6 I2C1_SCL I2C1
+PB7 I2C1_SDA I2C1
+
+I2C_ORDER I2C1
+
+# order of UARTs
+STDOUT_SERIAL SD3
+STDOUT_BAUDRATE 57600
+
+# order of UARTs
+SERIAL_ORDER OTG1 USART3
+
+# USART3 for debug
+PB10 USART3_TX USART3 SPEED_HIGH NODMA
+PB11 USART3_RX USART3 SPEED_HIGH NODMA
+
+define HAL_SERIAL0_BAUD_DEFAULT 57600
+
+# USART6 GPS
+PC6 USART6_TX USART6 SPEED_HIGH NODMA
+PC7 USART6_RX USART6 SPEED_HIGH NODMA
+
+# USB
+PA11 OTG_FS_DM OTG1
+PA12 OTG_FS_DP OTG1
+
+# USB setup
+USB_STRING_MANUFACTURER "ArduPilot"
+USB_STRING_PRODUCT "%BOARD%"
+
+# SD Card pins
+PC8 SDIO_D0 SDIO
+PC9 SDIO_D1 SDIO
+PC10 SDIO_D2 SDIO
+PC11 SDIO_D3 SDIO
+PC12 SDIO_CK SDIO
+PD2 SDIO_CMD SDIO
+
+# --------------------- CAM Trigger + Feedback -----------------------
+#PB8  TIM4_CH3  TIM4 PWM(1) GPIO(50)
+#PB9  TIM4_CH4  TIM4 PWM(2) GPIO(51)
+
+# WS2812 LED pin
+#PA15 TIM2_CH1 TIM2 PWM(3) GPIO(52)
+#PB4 TIM3_CH1 TIM3 PWM(4) GPIO(53)
+PC0 LED OUTPUT HIGH GPIO(2)
+
+# ----------------------- GPS ----------------------------
+define HAL_PERIPH_ENABLE_GPS
+define HAL_PERIPH_GPS_PORT_DEFAULT 3
+define GPS_MAX_RECEIVERS 1
+define GPS_MAX_INSTANCES 1
+
+# ---------------------- COMPASS ---------------------------
+define HAL_PERIPH_ENABLE_MAG
+
+SPIDEV  rm3100 SPI1 DEVID1   MAG_CS MODE0  1*MHZ  1*MHZ
+COMPASS RM3100 SPI:rm3100 false ROTATION_PITCH_180
+define AP_RM3100_REVERSAL_MASK 7
+define HAL_COMPASS_MAX_SENSORS 1
+
+# --------------------- DPS310 ---------------------------
+define HAL_PERIPH_ENABLE_BARO
+SPIDEV dps310 SPI1 DEVID3 BARO_CS MODE3 5*MHZ 5*MHZ
+BARO DPS310 SPI:dps310
+
+define HAL_USE_ADC TRUE
+define STM32_ADC_USE_ADC1 TRUE
+#define HAL_DISABLE_ADC_DRIVER TRUE
+PA3 VSENSE ADC1 SCALE(1)
+
+# -------------------- Buzzer+NeoPixels --------------------
+define HAL_PERIPH_ENABLE_RC_OUT
+define HAL_PERIPH_ENABLE_NOTIFY
+
+# Enable the sensor voltage pin
+#PC13 VDD_3V3_SENSORS_EN OUTPUT HIGH
+
+# allow for reboot command for faster development
+define HAL_PERIPH_LISTEN_FOR_SERIAL_UART_REBOOT_CMD_PORT 0
