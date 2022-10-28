@@ -1,4 +1,4 @@
-# hw definition for ADA-F405 node
+# hw definition for ADA-F405
 
 # ADA-F405 Bootloader
 
@@ -13,40 +13,29 @@ APJ_BOARD_ID 1000
 
 # hw definition file for processing by chibios_pins.py
 
-# setup build for a peripheral firmware
-env AP_PERIPH 1
-
 FLASH_RESERVE_START_KB 0
 FLASH_SIZE_KB 1024
 FLASH_BOOTLOADER_LOAD_KB 64
 
+PC1 LED_BOOTLOADER OUTPUT HIGH GPIO(0)
+define HAL_LED_ON 0
+
 # USB setup
-USB_STRING_MANUFACTURER "ArduPilot"
-USB_STRING_PRODUCT "%BOARD%"
+#USB_STRING_MANUFACTURER "ArduPilot"
+#USB_STRING_PRODUCT "%BOARD%"
 #USB_VENDOR 0x2DAE 
 #USB_PRODUCT 0x5011
-
-#define CH_CFG_ST_FREQUENCY 1000000
-
-# Enable the sensor voltage pin
-#PC1 VDD_3V3_SENSORS_EN OUTPUT HIGH
-
-#STDOUT_SERIAL SD3
-#STDOUT_BAUDRATE 57600
 
 # order of UARTs
 SERIAL_ORDER OTG1
 
 # USART3 
-PB10 USART3_TX USART3 SPEED_HIGH NODMA
-PB11 USART3_RX USART3 SPEED_HIGH NODMA
+PB10 USART3_TX USART3 
+PB11 USART3_RX USART3 
 
 # USART6 for GPS
-PC6 USART6_TX USART6 SPEED_HIGH NODMA
-PC7 USART6_RX USART6 SPEED_HIGH NODMA
-
-#define HAL_USE_SERIAL TRUE
-#define STM32_SERIAL_USE_USART3 TRUE
+PC6 USART6_TX USART6 
+PC7 USART6_RX USART6 
 
 # USB
 PA11 OTG_FS_DM OTG1
@@ -56,31 +45,6 @@ PA12 OTG_FS_DP OTG1
 PA13 JTMS-SWDIO SWD
 PA14 JTCK-SWCLK SWD
 
-# enable CAN support
-PB8 CAN1_RX CAN1
-PB9 CAN1_TX CAN1
-
-define HAL_USE_CAN TRUE
-define STM32_CAN_USE_CAN1 TRUE
-
-define CAN_APP_NODE_NAME "org.ardupilot.ADA-F405"
-
-# use DNA
-define HAL_CAN_DEFAULT_NODE_ID 0
-
-# reserve 256 bytes for comms between app and bootloader
-#RAM_RESERVE_START 256
-
 # Add CS pins to ensure they are high in bootloader
 PA4 MPU_CS CS
 PA15 FLASH_CS CS
-
-
-#define HAL_NO_GPIO_IRQ
-#define HAL_USE_EMPTY_IO TRUE
-
-# make bl baudrate match debug baudrate for easier debugging
-#define BOOTLOADER_BAUDRATE 57600
-
-# use a small bootloader timeout
-#define HAL_BOOTLOADER_TIMEOUT 1000
