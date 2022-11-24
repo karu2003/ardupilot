@@ -148,6 +148,12 @@ const AP_Param::GroupInfo AP_UAVCAN::var_info[] = {
     // @Range: 1024 16384
     // @User: Advanced
     AP_GROUPINFO("POOL", 8, AP_UAVCAN, _pool_size, UAVCAN_NODE_POOL_SIZE),
+
+    // @Param: ESC_SC
+    // @DisplayName: scale esc for uavcan
+    // @Description: send 4095 as 0 ESC command over UAVCAN
+    // @User: Advanced
+    AP_GROUPINFO("ESC_SC", 9, AP_UAVCAN, _esc_sc, 0),
     
     AP_GROUPEND
 };
@@ -585,6 +591,10 @@ void AP_UAVCAN::SRV_send_esc(void)
                 float scaled = cmd_max * (hal.rcout->scale_esc_to_unity(_SRV_conf[i].pulse) + 1.0) / 2.0;
 
                 scaled = constrain_float(scaled, 0, cmd_max);
+
+                if (_esc_sc){
+                    scaled = scaled - 4095;
+                }
 
                 esc_msg.cmd.push_back(static_cast<int>(scaled));
             } else {

@@ -269,6 +269,8 @@ private:
     AP_Int16 _options;
     AP_Int16 _notify_state_hz;
     AP_Int16 _pool_size;
+    AP_Int16 _esc_sc;
+
 
     AP_PoolAllocator *_allocator;
     AP_UAVCAN_DNA_Server *_dna_server;
