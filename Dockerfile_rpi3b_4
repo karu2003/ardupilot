@@ -15,7 +15,7 @@ RUN cd /opt  \
     && rm -rf /usr/lib/ccache \
     && rm -rf /opt/gcc-arm-none-eabi-10-2020-q4-major
 
-ENV PATH="/opt/cross-pi-gcc-10.3.0-0/bin:$PATH"
+ENV PATH="/opt/cross-pi-gcc-10.3.0-1/bin:$PATH"
 RUN echo "export PATH=$PATH" > /etc/environment
 USER ardupilot
 
