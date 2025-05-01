@@ -162,6 +162,12 @@ const AP_Param::GroupInfo AP_DroneCAN::var_info[] = {
     // @User: Advanced
     AP_GROUPINFO("ESC_RV", 9, AP_DroneCAN, _esc_rv, 0),
 
+    // @Param: ESC_SC
+    // @DisplayName: scale esc for DroneCAN
+    // @Description: send 4095 as 0 ESC command over DroneCAN
+    // @User: Advanced
+    AP_GROUPINFO("ESC_SC", 25, AP_DroneCAN, _esc_sc, 0),
+
 #if AP_RELAY_DRONECAN_ENABLED
     // @Param: RLY_RT
     // @DisplayName: DroneCAN relay output rate
@@ -268,6 +274,7 @@ const AP_Param::GroupInfo AP_DroneCAN::var_info[] = {
     // @Description: Serial protocol of DroneCAN serial port
     // @CopyFieldsFrom: CAN_D1_UC_S1_PRO
     AP_GROUPINFO("S3_PRO", 22,  AP_DroneCAN, serial.ports[2].state.protocol, -1),
+ 
 #endif
 #endif // AP_DRONECAN_SERIAL_ENABLED
 
@@ -730,6 +737,10 @@ int16_t AP_DroneCAN::scale_esc_output(uint8_t idx){
         scaled *= cmd_max;
     } else {
         scaled = cmd_max * (scaled + 1.0) / 2.0;
+    }
+
+    if (_esc_sc){
+        scaled = scaled * 2.0f - cmd_max;
     }
 
     return static_cast<int16_t>(scaled);
